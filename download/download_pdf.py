@@ -1,6 +1,7 @@
 import re
 import requests
 import os, errno
+import time
 
 def get_links(filename, prefixLen, afterLen):
     pathList = []
@@ -23,11 +24,14 @@ def download(pathToSave, fileList, urlPrefix):
     for filename in fileList:
         url = urlPrefix + filename + "pdf"
         response = requests.get(url)
-
+        time.sleep(5)
+        print (response.status_code)
+        if(response.status_code == 403):
+            print (response.text)
         print (url)
         path = pathToSave + "/" + str(idx) + "_" + filename + "pdf"
         with open(path, 'wb') as f:
-            f.write(response.content)
+            print (f.write(response.content))
         idx += 1
 
 
