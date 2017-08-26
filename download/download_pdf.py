@@ -1,7 +1,6 @@
 import re
-import requests
 import os, errno
-import time
+import urllib.request
 
 def get_links(filename, prefixLen, afterLen):
     pathList = []
@@ -23,15 +22,19 @@ def download(pathToSave, fileList, urlPrefix):
     idx = 1
     for filename in fileList:
         url = urlPrefix + filename + "pdf"
-        response = requests.get(url)
-        time.sleep(5)
-        print (response.status_code)
-        if(response.status_code == 403):
-            print (response.text)
         print (url)
+        # add user agent to http header, to avoid 403 forbidden error
+        send_headers = {
+                'User-Agent':'Mozilla/5.0 (Windows NT 6.2; rv:16.0)',
+        }
+        req = urllib.request.Request(url,headers=send_headers)
+        pdfFile = urllib.request.urlopen(req)
+
+
         path = pathToSave + "/" + str(idx) + "_" + filename + "pdf"
         with open(path, 'wb') as f:
-            print (f.write(response.content))
+            #print (f.write(response.content))
+            f.write(pdfFile.read())
         idx += 1
 
 
